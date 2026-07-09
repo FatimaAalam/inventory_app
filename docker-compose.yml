@@ -1,0 +1,79 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: inventory_app
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - inventory_net
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: inventory_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inventory_net
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:6
+    container_name: inventory_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - inventory_net
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: inventory_redis
+    networks:
+      - inventory_net
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:stable
+    container_name: inventory_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - inventory_net
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  mongo_data:
+
+networks:
+  inventory_net:
+    driver: bridge

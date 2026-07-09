@@ -1,0 +1,23 @@
+# Environment variables — NEVER commit real secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+*.egg-info/
+
+# Docker
+*.log
+
+# OS-specific junk
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
