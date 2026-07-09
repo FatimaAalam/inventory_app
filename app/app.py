@@ -71,7 +71,7 @@ def get_item(item_id):
     if row is None:
         return jsonify({"error": "Item not found"}), 404
     
-    item = {"id": row[0], "name": row[1], "quantity": row[2], "price": Flask(row[3])}
+    item = {"id": row[0], "name": row[1], "quantity": row[2], "price": float(row[3])}
 
     # Store in Redis cache for future requests
     redis_client.setex(chache_key, 60, json.dumps(item))  # Cache for 9 minutes
