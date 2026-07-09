@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
 from db import get_postgres_connection, get_mongo_client, get_redis_client
+from prometheus_flask_exporter import PrometheusMetrics
 import json
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 
 @app.route('/items', methods=['POST'])
 def create_item():
