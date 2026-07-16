@@ -69,19 +69,7 @@ services:
     networks:
       - inventory_net
     restart: unless-stopped
-
-volumes:
-  postgres_data:
-  mongo_data:
-  prometheus_data:
-  grafana_data:
-  loki_data:
-
-networks:
-  inventory_net:
-    driver: bridge
-
-postgres_exporter:
+  postgres_exporter:
     image: prometheuscommunity/postgres-exporter:latest
     container_name: inventory_postgres_exporter
     environment:
@@ -174,3 +162,15 @@ postgres_exporter:
     networks:
       - inventory_net
     restart: unless-stopped
+
+
+volumes:
+  postgres_data:
+  mongo_data:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+
+networks:
+  inventory_net:
+    driver: bridge
