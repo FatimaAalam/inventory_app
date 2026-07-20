@@ -9,8 +9,6 @@ services:
     env_file:
       - .env
     depends_on:
-      postgres:
-        condition: service_healthy
       mongo:
         condition: service_started
       redis:
@@ -19,24 +17,6 @@ services:
       - inventory_net
     restart: unless-stopped
 
-  postgres:
-    image: postgres:15
-    container_name: inventory_postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./app/--init--.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - inventory_net
-    restart: unless-stopped
 
   mongo:
     image: mongo:6
@@ -73,10 +53,7 @@ services:
     image: prometheuscommunity/postgres-exporter:latest
     container_name: inventory_postgres_exporter
     environment:
-      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
-    depends_on:
-      postgres:
-        condition: service_healthy
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?sslmode=disable"
     networks:
       - inventory_net
     restart: unless-stopped
@@ -170,7 +147,6 @@ services:
 
 
 volumes:
-  postgres_data:
   mongo_data:
   prometheus_data:
   grafana_data:
