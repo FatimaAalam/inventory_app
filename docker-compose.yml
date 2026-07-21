@@ -2,9 +2,7 @@ version: "3.9"
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: 450379780652.dkr.ecr.eu-north-1.amazonaws.com/inventory-app:latest
     container_name: inventory_app
     env_file:
       - .env
