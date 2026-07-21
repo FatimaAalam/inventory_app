@@ -2,20 +2,13 @@ resource "aws_security_group" "app_sg" {
   name        = "launch-wizard-1"
   description = "launch-wizard-1 created 2026-01-28T14:05:37.130Z"
   vpc_id      = "vpc-05e45cf5b3c3f60f8"
-  tags = {}
-
-  ingress {
-    from_port   = 5000
-    to_port     = 5000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  tags        = {}
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["39.34.231.229/32"]
   }
 
   ingress {
@@ -60,4 +53,11 @@ resource "aws_instance" "inventory_app" {
 resource "aws_eip" "inventory_eip" {
   instance = aws_instance.inventory_app.id
   domain   = "vpc"
+}
+resource "aws_ecr_repository" "inventory_app" {
+  name                 = "inventory-app"
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 }
