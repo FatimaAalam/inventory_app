@@ -51,7 +51,7 @@ services:
     image: prometheuscommunity/postgres-exporter:latest
     container_name: inventory_postgres_exporter
     environment:
-      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?sslmode=require"
     networks:
       - inventory_net
     restart: unless-stopped
